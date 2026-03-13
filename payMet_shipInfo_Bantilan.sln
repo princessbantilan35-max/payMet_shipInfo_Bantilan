@@ -1,9 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.11.35327.3
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11512.155 d18.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "payMet_shipInfo_Bantilan", "payMet_shipInfo_Bantilan.csproj", "{4B4A0FD8-401E-46F1-BC70-4D08AC428210}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentShippingMethod", "PaymentShippingMethod.csproj", "{4B4A0FD8-401E-46F1-BC70-4D08AC428210}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShipInfoAndPayMethodAppService", "ShippingInformationAndPaymentMethodAppService\ShipInfoAndPayMethodAppService.csproj", "{BC1BBB12-8102-40C0-8861-21F579EA9A8D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShipAndPayMethodDataService", "ShippingInformationAndPaymentMethodDataService\ShipAndPayMethodDataService.csproj", "{B06AEFBB-71A2-477E-8807-B77F4B565E3C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShipAndPayMethodModels", "ShippingInformationAndPaymentMethodModels\ShipAndPayMethodModels.csproj", "{4DD25CDE-65E5-4A97-BC3F-A651F794CCBD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +21,18 @@ Global
 		{4B4A0FD8-401E-46F1-BC70-4D08AC428210}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B4A0FD8-401E-46F1-BC70-4D08AC428210}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B4A0FD8-401E-46F1-BC70-4D08AC428210}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC1BBB12-8102-40C0-8861-21F579EA9A8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC1BBB12-8102-40C0-8861-21F579EA9A8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC1BBB12-8102-40C0-8861-21F579EA9A8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC1BBB12-8102-40C0-8861-21F579EA9A8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B06AEFBB-71A2-477E-8807-B77F4B565E3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B06AEFBB-71A2-477E-8807-B77F4B565E3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B06AEFBB-71A2-477E-8807-B77F4B565E3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B06AEFBB-71A2-477E-8807-B77F4B565E3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DD25CDE-65E5-4A97-BC3F-A651F794CCBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DD25CDE-65E5-4A97-BC3F-A651F794CCBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DD25CDE-65E5-4A97-BC3F-A651F794CCBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DD25CDE-65E5-4A97-BC3F-A651F794CCBD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

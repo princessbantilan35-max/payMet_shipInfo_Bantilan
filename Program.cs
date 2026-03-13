@@ -1,40 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using BusinessLogic;
+using OrderModels;
 
 namespace ShippingandPayment_Management_System
 {
-    internal class Program
+    public class Program
     {
-        static List<string> orderIDs = new List<string>();
-        static List<string> customerNames = new List<string>();
-        static List<string> shippingAddresses = new List<string>();
-        static List<string> itemNames = new List<string>();
-        static List<int> quantities = new List<int>();
-        static List<double> prices = new List<double>();
-        static List<string> shippingMethods = new List<string>();
-        static List<string> orderStatuses = new List<string>();
-        static List<DateTime> orderDates = new List<DateTime>();
-        static List<DateTime> estimatedDeliveries = new List<DateTime>();
+        static OrderBusiness orderBusiness = new OrderBusiness();
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             Console.WriteLine("----- SHIPPING MANAGEMENT SYSTEM -----");
             AdminMenu();
         }
 
-        static void AdminMenu()
+        public static void AdminMenu()
         {
-            Console.WriteLine("\nMAIN MENU:\n");
+            Console.WriteLine("\nMAIN MENU\n");
 
-            string[] options = new string[]
-            {
-                "Create Order",
-                "View Orders",
-                "Delete Order",
-                "Exit"
-            };
+            Console.WriteLine("[1] Create Order");
+            Console.WriteLine("[2] View Orders");
+            Console.WriteLine("[3] Delete Order");
+            Console.WriteLine("[4] Exit");
 
-            ShowOptions(options);
+            Console.Write("Enter option: ");
             string option = Console.ReadLine();
 
             switch (option)
@@ -52,139 +42,87 @@ namespace ShippingandPayment_Management_System
                     Environment.Exit(0);
                     break;
                 default:
-                    Console.WriteLine("Invalid option.");
+                    Console.WriteLine("Invalid option");
                     AdminMenu();
                     break;
             }
         }
 
-        static void CreateOrder()
+        public static void CreateOrder()
         {
-            Console.WriteLine("\nCREATE ORDER:");
+            OrderModel order = new OrderModel();
 
-            string orderID = "ORD" + (orderIDs.Count + 1);
-            DateTime orderDate = DateTime.Now;
+            order.OrderID = "ORD" + DateTime.Now.Ticks;
+            order.OrderDate = DateTime.Now;
 
             Console.Write("Customer Name: ");
-            string customerName = Console.ReadLine();
+            order.CustomerName = Console.ReadLine();
+
+            Console.Write("Phone Number: ");
+            order.PhoneNumber = Console.ReadLine();
 
             Console.Write("Shipping Address: ");
-            string shippingAddress = Console.ReadLine();
+            order.ShippingAddress = Console.ReadLine();
 
             Console.Write("Item Name: ");
-            string itemName = Console.ReadLine();
+            order.ItemName = Console.ReadLine();
 
             Console.Write("Quantity: ");
-            int quantity = Convert.ToInt32(Console.ReadLine());
+            order.Quantity = Convert.ToInt32(Console.ReadLine());
 
             Console.Write("Price per Item: ");
-            double price = Convert.ToDouble(Console.ReadLine());
+            order.Price = Convert.ToDouble(Console.ReadLine());
 
             Console.Write("Shipping Method (Standard/Express): ");
-            string shippingMethod = Console.ReadLine();
+            order.ShippingMethod = Console.ReadLine();
 
-            DateTime estimatedDelivery;
+            order.OrderStatus = "Processing";
 
-            if (shippingMethod.ToLower() == "express")
-                estimatedDelivery = orderDate.AddDays(2);
+            if (order.ShippingMethod.ToLower() == "express")
+                order.EstimatedDelivery = order.OrderDate.AddDays(2);
             else
-                estimatedDelivery = orderDate.AddDays(5);
+                order.EstimatedDelivery = order.OrderDate.AddDays(5);
 
-            string orderStatus = "Processing";
+            orderBusiness.CreateOrder(order);
 
-            orderIDs.Add(orderID);
-            customerNames.Add(customerName);
-            shippingAddresses.Add(shippingAddress);
-            itemNames.Add(itemName);
-            quantities.Add(quantity);
-            prices.Add(price);
-            shippingMethods.Add(shippingMethod);
-            orderStatuses.Add(orderStatus);
-            orderDates.Add(orderDate);
-            estimatedDeliveries.Add(estimatedDelivery);
-
-            Console.WriteLine("Order Created Successfully!");
+            Console.WriteLine("Order created successfully!");
             AdminMenu();
         }
 
-        static void ViewOrders()
+        public static void ViewOrders()
         {
-            if (orderIDs.Count == 0)
+            var orders = orderBusiness.GetOrders();
+
+            if (orders.Count == 0)
             {
                 Console.WriteLine("No orders available.");
-                AdminMenu();
-                return;
             }
 
-            for (int i = 0; i < orderIDs.Count; i++)
+            for (int i = 0; i < orders.Count; i++)
             {
-                double subtotal = quantities[i] * prices[i];
+                var o = orders[i];
 
-                double shippingFee;
-
-                if (shippingMethods[i].ToLower() == "express")
-                    shippingFee = 150;
-                else
-                    shippingFee = 80;
-
-                double total = subtotal + shippingFee;
-
-                Console.WriteLine("\n--------------------------------------------------");
-                Console.WriteLine("ORDER DETAILS");
-                Console.WriteLine("--------------------------------------------------");
-                Console.WriteLine("Order ID: " + orderIDs[i]);
-                Console.WriteLine("Order Date: " + orderDates[i]);
-                Console.WriteLine("Estimated Delivery: " + estimatedDeliveries[i]);
-                Console.WriteLine("Order Status: " + orderStatuses[i]);
-                Console.WriteLine("\nCustomer: " + customerNames[i]);
-                Console.WriteLine("Shipping Address: " + shippingAddresses[i]);
-                Console.WriteLine("\nItem: " + itemNames[i]);
-                Console.WriteLine("Quantity: " + quantities[i]);
-                Console.WriteLine("Subtotal: " + subtotal + " pesos");
-                Console.WriteLine("Shipping Fee: " + shippingFee + " pesos");
-                Console.WriteLine("Total: " + total + " pesos");
-                Console.WriteLine("--------------------------------------------------");
+                Console.WriteLine("\n--------------------------------");
+                Console.WriteLine("Order ID: " + o.OrderID);
+                Console.WriteLine("Customer: " + o.CustomerName);
+                Console.WriteLine("Item: " + o.ItemName);
+                Console.WriteLine("Quantity: " + o.Quantity);
+                Console.WriteLine("Total: " + o.Total() + " pesos");
+                Console.WriteLine("--------------------------------");
             }
 
             AdminMenu();
         }
 
-        static void DeleteOrder()
+        public static void DeleteOrder()
         {
-            Console.Write("Enter Order ID to delete: ");
-            string findID = Console.ReadLine();
+            Console.Write("Enter Order ID: ");
+            string id = Console.ReadLine();
 
-            for (int i = 0; i < orderIDs.Count; i++)
-            {
-                if (orderIDs[i] == findID)
-                {
-                    orderIDs.RemoveAt(i);
-                    customerNames.RemoveAt(i);
-                    shippingAddresses.RemoveAt(i);
-                    itemNames.RemoveAt(i);
-                    quantities.RemoveAt(i);
-                    prices.RemoveAt(i);
-                    shippingMethods.RemoveAt(i);
-                    orderStatuses.RemoveAt(i);
-                    orderDates.RemoveAt(i);
-                    estimatedDeliveries.RemoveAt(i);
+            orderBusiness.DeleteOrder(id);
 
-                    Console.WriteLine("Order Deleted Successfully!");
-                    break;
-                }
-            }
-
+            Console.WriteLine("Order deleted.");
             AdminMenu();
-        }
-
-        static void ShowOptions(string[] options)
-        {
-            for (int x = 0; x < options.Length; x++)
-            {
-                Console.WriteLine($"[{x + 1}] {options[x]}");
-            }
-
-            Console.Write("Enter the number of your option: ");
         }
     }
 }
