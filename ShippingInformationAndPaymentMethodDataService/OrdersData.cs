@@ -22,7 +22,6 @@ namespace ShippingInformationAndPaymentMethodDataService
                 ShippingInformations.Remove(shippingInfo);
             }
         }
-
         public static List<OrderModel> GetShippingInformations()
         {
             return new List<OrderModel>(ShippingInformations);

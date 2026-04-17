@@ -6,7 +6,7 @@ namespace BusinessLogic
 {
     public class OrderBusiness
     {
-        private OrderJsonData dataService = new OrderJsonData();
+        OrderDBData dataService = new OrderDBData();
 
         public List<OrderModel> GetShippingInformations()
         {

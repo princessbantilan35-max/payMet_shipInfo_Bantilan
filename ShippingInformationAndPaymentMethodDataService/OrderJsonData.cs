@@ -16,7 +16,6 @@ namespace ShippingDataService
         public OrderJsonData()
         {
             _jsonFileName = $"{AppDomain.CurrentDomain.BaseDirectory}/ShippingInfos.json";
-
             PopulateJsonFile();
         }
 
@@ -24,20 +23,19 @@ namespace ShippingDataService
         {
             if (!File.Exists(_jsonFileName))
             {
-                File.Create(_jsonFileName).Close();
+                using (File.Create(_jsonFileName)) { }
             }
 
             RetrieveDataFromJsonFile();
 
             if (orders.Count <= 0)
             {
-                // Optional default data
                 orders.Add(new OrderModel
                 {
                     OrderID = "SHIP-DEFAULT-1",
-                    CustomerName = "Juan Dela Cruz",
+                    CustomerName = "Princess Bantilan",
                     PhoneNumber = "09123456789",
-                    ShippingAddress = "Quezon City",
+                    ShippingAddress = "Biñan City, Laguna",
                     ItemName = "Sample Item",
                     Quantity = 1,
                     Price = 100,
@@ -82,16 +80,21 @@ namespace ShippingDataService
                 return;
             }
 
-            orders = JsonSerializer.Deserialize<List<OrderModel>>(
-                json,
-                new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                }
-            ) ?? new List<OrderModel>();
+            try
+            {
+                orders = JsonSerializer.Deserialize<List<OrderModel>>(
+                    json,
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    }
+                ) ?? new List<OrderModel>();
+            }
+            catch
+            {
+                orders = new List<OrderModel>();
+            }
         }
-
-        // ================= CRUD METHODS =================
 
         public void Add(OrderModel order)
         {
@@ -116,19 +119,11 @@ namespace ShippingDataService
         {
             RetrieveDataFromJsonFile();
 
-            var existing = orders.FirstOrDefault(x => x.OrderID == updatedOrder.OrderID);
+            var index = orders.FindIndex(x => x.OrderID == updatedOrder.OrderID);
 
-            if (existing != null)
+            if (index != -1)
             {
-                existing.CustomerName = updatedOrder.CustomerName;
-                existing.PhoneNumber = updatedOrder.PhoneNumber;
-                existing.ShippingAddress = updatedOrder.ShippingAddress;
-                existing.ShippingMethod = updatedOrder.ShippingMethod;
-                existing.OrderStatus = updatedOrder.OrderStatus;
-                existing.EstimatedDelivery = updatedOrder.EstimatedDelivery;
-                existing.ItemName = updatedOrder.ItemName;
-                existing.Quantity = updatedOrder.Quantity;
-                existing.Price = updatedOrder.Price;
+                orders[index] = updatedOrder;
             }
 
             SaveDataToJsonFile();

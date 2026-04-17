@@ -17,9 +17,10 @@ namespace OrderModels
         public DateTime EstimatedDelivery { get; set; }
         public double Total()
         {
-            double subtotal = Quantity * Price;
+            models: double subtotal = Quantity * Price;
             double shippingFee = (ShippingMethod?.ToLower() == "express") ? 150 : 80;
             return subtotal + shippingFee;
+
         }
     }
 }

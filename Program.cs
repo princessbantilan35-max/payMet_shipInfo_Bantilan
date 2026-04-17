@@ -97,14 +97,14 @@ namespace ShippingandPayment_Management_System
             if (orderBusiness.IsValidShippingInformation(shippingInfo))
             {
                 orderBusiness.CreateShippingInformation(shippingInfo);
-                Console.WriteLine($"\n✅ Shipping information created successfully!");
+                Console.WriteLine($"\n Shipping information created successfully!");
                 Console.WriteLine($"Shipping ID: {shippingInfo.OrderID}");
                 Console.WriteLine($"Estimated Delivery: {shippingInfo.EstimatedDelivery:MM/dd/yyyy}");
                 Console.WriteLine($"Total Amount: {shippingInfo.Total():F2} pesos");
             }
             else
             {
-                Console.WriteLine("\n❌ Validation failed! Please check your input.");
+                Console.WriteLine("\n Validation failed! Please check your input.");
             }
 
             MainMenu();
@@ -173,7 +173,7 @@ namespace ShippingandPayment_Management_System
             }
 
             var shippingInfo = shippingInfos[choice - 1];
-            Console.WriteLine($"\n✅ Selected: {shippingInfo.OrderID} - {shippingInfo.CustomerName}");
+            Console.WriteLine($"\n Selected: {shippingInfo.OrderID} - {shippingInfo.CustomerName}");
 
             Console.WriteLine("\n===== CURRENT INFORMATION =====");
             Console.WriteLine($"Shipping ID: {shippingInfo.OrderID}");
@@ -254,12 +254,12 @@ namespace ShippingandPayment_Management_System
             if (orderBusiness.IsValidShippingInformation(shippingInfo))
             {
                 orderBusiness.UpdateShippingInformation(shippingInfo);
-                Console.WriteLine($"\n✅ Shipping information updated successfully!");
+                Console.WriteLine($"\n Shipping information updated successfully!");
                 Console.WriteLine($"Updated Shipping ID: {shippingInfo.OrderID}");
             }
             else
             {
-                Console.WriteLine("\n❌ Validation failed! Please check your input.");
+                Console.WriteLine("\n Validation failed! Please check your input.");
             }
 
             MainMenu();
@@ -298,7 +298,7 @@ namespace ShippingandPayment_Management_System
             }
 
             var shippingInfo = shippingInfos[choice - 1];
-            Console.WriteLine($"\n⚠️  Confirm deletion:");
+            Console.WriteLine($"\n  Confirm deletion:");
             Console.WriteLine($"Shipping ID: {shippingInfo.OrderID}");
             Console.WriteLine($"Customer: {shippingInfo.CustomerName}");
             Console.WriteLine($"Item: {shippingInfo.ItemName}");
@@ -308,11 +308,11 @@ namespace ShippingandPayment_Management_System
             if (Console.ReadLine().ToLower() == "y")
             {
                 orderBusiness.DeleteShippingInformation(shippingInfo.OrderID);
-                Console.WriteLine("\n✅ Shipping information deleted successfully!");
+                Console.WriteLine("\n Shipping information deleted successfully!");
             }
             else
             {
-                Console.WriteLine("\n❌ Deletion cancelled.");
+                Console.WriteLine("\n Deletion cancelled.");
             }
 
             MainMenu();
@@ -342,9 +342,7 @@ namespace ShippingandPayment_Management_System
             }
 
             Console.Write("\nEnter number for payment (1-" + shippingInfos.Count + "): ");
-            string choiceStr = Console.ReadLine();
-
-            if (!int.TryParse(choiceStr, out int choice) || choice < 1 || choice > shippingInfos.Count)
+            if (!int.TryParse(Console.ReadLine(), out int choice) || choice < 1 || choice > shippingInfos.Count)
             {
                 Console.WriteLine("Invalid selection!");
                 MainMenu();
@@ -352,51 +350,114 @@ namespace ShippingandPayment_Management_System
             }
 
             var order = shippingInfos[choice - 1];
-            Console.WriteLine($"\n✅ Selected: {order.OrderID} - {order.CustomerName}");
 
-            Console.WriteLine($"\n----- PAYMENT PROCESSING -----");
+            Console.WriteLine($"\nSelected: {order.OrderID} - {order.CustomerName}");
+            Console.WriteLine("\n----- PAYMENT METHOD -----");
+            Console.WriteLine("[1] Cash on Delivery");
+            Console.WriteLine("[2] E-Wallet (GCash / PayMaya)");
+            Console.WriteLine("[3] Card Payment");
+
+            Console.Write("Choose payment method: ");
+            string methodChoice = Console.ReadLine();
+
+            string paymentMethod = "";
+            string details = "";
+
+            switch (methodChoice)
+            {
+                case "1":
+                    paymentMethod = "Cash on Delivery";
+                    order.OrderStatus = "To Ship (COD)";
+                    Console.WriteLine("\nOrder placed as Cash on Delivery.");
+                    Console.WriteLine("Payment will be collected upon delivery.");
+                    break;
+
+                case "2":
+                    Console.WriteLine("\nChoose E-Wallet:");
+                    Console.WriteLine("[1] GCash");
+                    Console.WriteLine("[2] PayMaya");
+
+                    Console.Write("Enter choice: ");
+                    string walletChoice = Console.ReadLine();
+
+                    if (walletChoice == "1")
+                        paymentMethod = "GCash";
+                    else if (walletChoice == "2")
+                        paymentMethod = "PayMaya";
+                    else
+                    {
+                        Console.WriteLine("Invalid E-Wallet choice!");
+                        MainMenu();
+                        return;
+                    }
+
+                    Console.Write("Enter Phone Number: ");
+                    details = Console.ReadLine();
+
+                    Console.Write("Enter payment amount: ");
+                    if (!double.TryParse(Console.ReadLine(), out double ewalletAmount) || ewalletAmount < order.Total())
+                    {
+                        Console.WriteLine("Invalid or insufficient payment!");
+                        MainMenu();
+                        return;
+                    }
+
+                    order.OrderStatus = "Paid (E-Wallet)";
+                    Console.WriteLine("\nPayment successful via " + paymentMethod);
+                    Console.WriteLine($"Reference Number: {Guid.NewGuid()}");
+                    break;
+
+                case "3":
+                    Console.WriteLine("\nCard Type:");
+                    Console.WriteLine("[1] Savings");
+                    Console.WriteLine("[2] Credit");
+
+                    Console.Write("Enter choice: ");
+                    string cardType = Console.ReadLine();
+
+                    if (cardType == "1")
+                        paymentMethod = "Savings Card";
+                    else if (cardType == "2")
+                        paymentMethod = "Credit Card";
+                    else
+                    {
+                        Console.WriteLine("Invalid card type!");
+                        MainMenu();
+                        return;
+                    }
+
+                    Console.Write("Enter Bank Account Number: ");
+                    details = Console.ReadLine();
+
+                    Console.Write("Enter payment amount: ");
+                    if (!double.TryParse(Console.ReadLine(), out double cardAmount) || cardAmount < order.Total())
+                    {
+                        Console.WriteLine("Invalid or insufficient payment!");
+                        MainMenu();
+                        return;
+                    }
+
+                    order.OrderStatus = "Paid (Card)";
+                    Console.WriteLine("\nCard payment successful!");
+                    Console.WriteLine($"Transaction ID: {Guid.NewGuid()}");
+                    break;
+
+                default:
+                    Console.WriteLine("Invalid payment method!");
+                    MainMenu();
+                    return;
+            }
+            orderBusiness.UpdateShippingInformation(order);
+
+            Console.WriteLine("\n===== PAYMENT SUMMARY =====");
             Console.WriteLine($"Customer: {order.CustomerName}");
-            Console.WriteLine($"Item: {order.ItemName}");
-            Console.WriteLine($"Quantity: {order.Quantity}");
-            Console.WriteLine($"Total Amount: {order.Total():F2} pesos");
-            Console.WriteLine($"Current Status: {order.OrderStatus}");
+            Console.WriteLine($"Payment Method: {paymentMethod}");
+            if (!string.IsNullOrEmpty(details))
+                Console.WriteLine($"Details: {details}");
+            Console.WriteLine($"Status: {order.OrderStatus}");
+            Console.WriteLine("Thank you and have a great day!");
 
-            Console.Write("Payment Method (Cash/Card): ");
-            string paymentMethod = Console.ReadLine();
-
-            Console.Write("Enter payment amount: ");
-            if (!double.TryParse(Console.ReadLine(), out double paymentAmount) || paymentAmount < 0)
-            {
-                Console.WriteLine("❌ Invalid payment amount!");
-                MainMenu();
-                return;
-            }
-
-            if (paymentAmount >= order.Total())
-            {
-                bool paymentSuccess = orderBusiness.ProcessPayment(order, paymentAmount, paymentMethod);
-
-                if (paymentSuccess)
-                {
-                    double change = paymentAmount - order.Total();
-                    Console.WriteLine($"\n✅ Payment processed successfully!");
-                    Console.WriteLine($"Payment Method: {paymentMethod}");
-                    Console.WriteLine($"Amount Paid: {paymentAmount:F2} pesos");
-                    if (change > 0)
-                        Console.WriteLine($"Change: {change:F2} pesos");
-                    Console.WriteLine($"New Status: {order.OrderStatus}");
-                }
-                else
-                {
-                    Console.WriteLine("❌ Payment processing failed!");
-                }
-            }
-            else
-            {
-                Console.WriteLine("❌ Insufficient payment amount!");
-            }
             MainMenu();
         }
     }
-
 }
