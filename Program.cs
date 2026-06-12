@@ -19,7 +19,7 @@ namespace ShippingandPayment_Management_System
 
         public static void MainMenu()
         {
-            Console.WriteLine("\nMAIN MENU\n");
+            Console.WriteLine("\n === MAIN MENU === \n");
             Console.WriteLine("[1] Create Shipping Information");
             Console.WriteLine("[2] View Shipping Information");
             Console.WriteLine("[3] Update Shipping Information");
@@ -71,7 +71,7 @@ namespace ShippingandPayment_Management_System
             Console.Write("Phone Number: ");
             shippingInfo.PhoneNumber = Console.ReadLine();
 
-            Console.Write("Shipping Address: ");
+            Console.Write("Complete Shipping Address: ");
             shippingInfo.ShippingAddress = Console.ReadLine();
 
             Console.Write("Item Name: ");

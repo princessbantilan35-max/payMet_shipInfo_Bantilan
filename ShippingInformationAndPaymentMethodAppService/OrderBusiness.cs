@@ -1,13 +1,14 @@
 ﻿using OrderModels;
 using ShippingDataService;
-using System.Collections.Generic;
+using PayMethodShipInfoAPI.Models;
 
 namespace BusinessLogic
 {
     public class OrderBusiness
     {
-        OrderDBData dataService = new OrderDBData();
+        private readonly OrderJsonData dataService = new OrderJsonData();
 
+       
         public List<OrderModel> GetShippingInformations()
         {
             return dataService.GetOrders();
@@ -28,17 +29,6 @@ namespace BusinessLogic
             dataService.Delete(orderId);
         }
 
-        public bool ProcessPayment(OrderModel order, double amount, string method)
-        {
-            if (amount >= order.Total())
-            {
-                order.OrderStatus = "Paid";
-                dataService.Update(order);
-                return true;
-            }
-            return false;
-        }
-
         public bool IsValidShippingInformation(OrderModel order)
         {
             return !string.IsNullOrEmpty(order.CustomerName) &&
@@ -46,6 +36,43 @@ namespace BusinessLogic
                    !string.IsNullOrEmpty(order.ShippingAddress) &&
                    order.Quantity > 0 &&
                    order.Price > 0;
+        }
+
+        public List<PaymentModel> GetPayments()
+        {
+            return PaymentData.GetAll();
+        }
+
+        public PaymentModel? GetPaymentById(string paymentId)
+        {
+            return PaymentData.GetById(paymentId);
+        }
+
+        public PaymentModel? GetPaymentByOrderId(string orderId)
+        {
+            return PaymentData.GetAll()
+                .Find(p => p.OrderID == orderId);
+        }
+
+        public bool CreatePayment(PaymentModel payment)
+        {
+            if (payment == null)
+            {
+                return false;
+            }
+
+            PaymentData.Add(payment);
+            return true;
+        }
+
+        public void UpdatePayment(PaymentModel payment)
+        {
+            PaymentData.Update(payment);
+        }
+
+        public void DeletePayment(string paymentId)
+        {
+            PaymentData.Delete(paymentId);
         }
     }
 }
